@@ -1,0 +1,7 @@
+{
+  "extends": "@antfu",
+  "rules": {
+    "import/named": "off",
+    "antfu/top-level-function": "off"
+  }
+}
