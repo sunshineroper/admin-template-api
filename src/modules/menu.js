@@ -1,7 +1,8 @@
 import { DataTypes, Model } from 'sequelize'
 import sequelize from '../utils/db'
 
-class Menu extends Model {}
+class Menu extends Model {
+}
 Menu.init({
   id: {
     type: DataTypes.INTEGER,
@@ -10,7 +11,7 @@ Menu.init({
   },
   pid: {
     type: DataTypes.INTEGER,
-    primaryKey: true,
+    comment: '父级id',
   },
   name: {
     type: DataTypes.STRING,
@@ -42,17 +43,13 @@ Menu.init({
     type: DataTypes.STRING,
     comment: '组件文件路径',
   },
-  component_url: {
+  router_url: {
     type: DataTypes.STRING,
     comment: '组件访问地址',
   },
   router_name: {
     type: DataTypes.STRING,
     comment: '路由名称',
-  },
-  router_url: {
-    type: DataTypes.STRING,
-    comment: '路由路径',
   },
   sort: {
     type: DataTypes.INTEGER,
