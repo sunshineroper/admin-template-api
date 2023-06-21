@@ -12,14 +12,6 @@ export default class MenuController {
     const menu = await MenuModel.findByPk(id)
     if (!menu)
       throw new NotFound(16)
-    await MenuModel.destroy({
-      where: {
-        [Op.or]: {
-          id,
-          pid: id,
-        },
-      },
-    })
   }
 
   static async addOrEditMenu(v) {
@@ -52,7 +44,7 @@ export default class MenuController {
     menu.title = v.get('body.title')
     menu.component_path = v.get('body.component_path')
     menu.router_url = v.get('body.router_url')
-    menu.router_name = v.get('body.router_name')
+    menu.router_name = v.get('body.router_name', '')
 
     if (!id) {
       await menu.save()
