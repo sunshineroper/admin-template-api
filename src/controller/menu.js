@@ -1,4 +1,5 @@
-import { NotFound } from 'koa-cms-lib'
+import { NotFound, RepeatException } from 'koa-cms-lib'
+import { Op } from 'sequelize'
 import MenuModel from '../modules/menu'
 
 export default class MenuController {
@@ -14,6 +15,8 @@ export default class MenuController {
       if (!parentMenu)
         throw new NotFound(17)
     }
+    if (await MenuController.getOneMenuByField({ router_name: v.get('body.router_name') }, id ? { id } : {}))
+      throw new RepeatException(18)
 
     let menu
     if (!id) {
@@ -34,6 +37,7 @@ export default class MenuController {
     menu.title = v.get('body.title')
     menu.component_path = v.get('body.component_path')
     menu.router_url = v.get('body.router_url')
+    menu.router_name = v.get('body.router_name')
 
     if (!id) {
       await menu.save()
@@ -47,5 +51,28 @@ export default class MenuController {
       })
     }
     return true
+  }
+
+  static async getOneMenuByField(andField = {}, ne = {}) {
+    const where = {}
+    const neKeys = Object.keys(ne)
+    if (neKeys.length > 0) {
+      for (const key of neKeys) {
+        const val = ne[key]
+        if (val !== null) {
+          where[key] = {
+            [Op.ne]: val,
+          }
+        }
+      }
+    }
+    where[Op.and] = andField
+    const menu = await MenuModel.findOne({
+      where,
+    },
+    )
+    if (menu && menu.dataValues)
+      return menu.dataValues
+    return false
   }
 }
