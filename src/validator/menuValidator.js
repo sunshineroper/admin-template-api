@@ -1,6 +1,6 @@
 import { Rule, Validator } from 'koa-cms-lib'
 
-export class AddMenuValidator extends Validator {
+export class AddRoleValidator extends Validator {
   constructor() {
     super()
     this.pid = [

@@ -53,6 +53,7 @@ export default class MenuController {
     menu.component_path = v.get('body.component_path')
     menu.router_url = v.get('body.router_url')
     menu.router_name = v.get('body.router_name')
+    menu.sort = v.get('body.sort')
 
     if (!id) {
       await menu.save()

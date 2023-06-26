@@ -55,10 +55,6 @@ Menu.init({
     type: DataTypes.INTEGER,
     comment: '排序',
   },
-  role_id: {
-    type: DataTypes.INTEGER,
-    comment: '角色ID',
-  },
 }, {
   tableName: 'menu',
   sequelize,
