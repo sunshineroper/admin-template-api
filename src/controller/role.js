@@ -1,6 +1,6 @@
 import { NotFound } from 'koa-cms-lib'
 import RoleModel from '../modules/role'
-import { sequelize } from '../utils/db'
+import sequelize from '../utils/db'
 
 export default class MenuController {
   static async getRoleList() {
@@ -10,8 +10,10 @@ export default class MenuController {
   static async addOrEditRole(v, ctx) {
     const id = v.get('body.id')
     let role = new RoleModel()
+    let code = 22
     if (id) {
       role = await RoleModel.findByPk(id)
+      code = 23
       if (!role)
         return NotFound(20)
     }
@@ -19,7 +21,7 @@ export default class MenuController {
     role.status = v.get('body.status')
     role.description = v.get('body.description')
     await role.save()
-    ctx.success(22)
+    ctx.success(code)
   }
 
   static async deleteRole(v, ctx) {
@@ -30,16 +32,18 @@ export default class MenuController {
       if (!role)
         return NotFound(20)
     }
-    const t = await sequelize.transition()
-
+    let t
     try {
-      await role.save({
+      t = await sequelize.transaction()
+      await role.destroy({
         transaction: t,
       })
+      await t.commit()
+      ctx.success(21)
     }
     catch (error) {
-      await t.rollback()
+      t && await t.rollback()
+      ctx.success(10021)
     }
-    ctx.success(21)
   }
 }

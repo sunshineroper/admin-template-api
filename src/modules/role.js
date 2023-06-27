@@ -5,6 +5,7 @@ import sequelize from '../utils/db'
 class Role extends Model {
   toJSON() {
     const origin = {
+      id: this.id,
       name: this.name,
       status: this.status,
       description: this.description,

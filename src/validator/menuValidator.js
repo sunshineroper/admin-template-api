@@ -1,6 +1,6 @@
 import { Rule, Validator } from 'koa-cms-lib'
 
-export class AddRoleValidator extends Validator {
+export class AddMenuValidator extends Validator {
   constructor() {
     super()
     this.pid = [
@@ -9,5 +9,16 @@ export class AddRoleValidator extends Validator {
     ]
     this.name = new Rule('isNotEmpty', '菜单名称不能为空')
     this.type = new Rule('isNotEmpty', '菜单类型不能为空')
+  }
+}
+
+export class MenuByRouterNameValidator extends Validator {
+  constructor() {
+    super()
+    this.id = [
+      new Rule('isOptional'),
+      new Rule('isNotEmpty', 'id不能为空'),
+    ]
+    this.router_name = new Rule('isNotEmpty', '路由名称不能为空')
   }
 }

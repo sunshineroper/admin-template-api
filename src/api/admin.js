@@ -1,7 +1,7 @@
 import { SRouter } from 'koa-cms-lib'
 import MenuController from '../controller/menu'
 import RoleController from '../controller/role'
-import { AddMenuValidator } from '../validator/menuValidator'
+import { AddMenuValidator, MenuByRouterNameValidator } from '../validator/menuValidator'
 import { PositiveIdValidator } from '../validator/commonValidator'
 import { AddRoleValidator } from '../validator/roleValidator'
 
@@ -13,6 +13,12 @@ const adminRouter = new SRouter({
 adminRouter.sGet('获取所有菜单', '/menu/getMenuList', adminRouter.permission('获取所有菜单'), async (ctx) => {
   const menuList = await MenuController.getMenuList()
   ctx.json(menuList)
+})
+
+adminRouter.sGet('根据路由名称获取菜单', '/menu/getMenuByRouterName', adminRouter.permission('根据路由名称获取菜单'), async (ctx) => {
+  const v = await new MenuByRouterNameValidator().validate(ctx)
+  const menu = await MenuController.getMenuByRouterName(v)
+  ctx.json(menu)
 })
 
 adminRouter.sDelete('删除菜单', '/menu/deleteMenu/:id', adminRouter.permission('删除菜单'), async (ctx) => {
@@ -41,7 +47,7 @@ adminRouter.sGet('获取所有角色', '/role/getRoleList', adminRouter.permissi
 adminRouter.sDelete('删除角色', '/role/deleteRole/:id', adminRouter.permission('删除角色'), async (ctx) => {
   const v = await new PositiveIdValidator().validate(ctx)
 
-  return await RoleController.deleteMenu(v, ctx)
+  return await RoleController.deleteRole(v, ctx)
 })
 adminRouter.sPost('新增或修改角色', '/role/addRole', adminRouter.permission('新增或修改角色'), async (ctx) => {
   const v = await new AddRoleValidator().validate(ctx)

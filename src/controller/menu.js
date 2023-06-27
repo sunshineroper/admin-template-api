@@ -25,15 +25,16 @@ export default class MenuController {
   static async addOrEditMenu(v) {
     const id = v.get('body.id')
     const pid = v.get('body.pid')
+    let menu
     if (pid !== 0) {
       const parentMenu = await MenuModel.findByPk(pid)
       if (!parentMenu)
         throw new NotFound(17)
     }
-    if (await MenuController.getOneMenuByField({ router_name: v.get('body.router_name') }, id ? { id } : {}))
+    menu = await MenuController.getOneMenuByField({ router_name: v.get('body.router_name') }, id ? { id } : {})
+    if (Object.keys(menu).length > 0)
       throw new RepeatException(18)
 
-    let menu
     if (!id) {
       menu = new MenuModel()
     }
@@ -69,6 +70,16 @@ export default class MenuController {
     return true
   }
 
+  static async getMenuByRouterName(v) {
+    const id = v.get('query.id')
+    const router_name = v.get('query.router_name')
+    const ne = {}
+    if (id)
+      ne.id = id
+
+    return await MenuController.getOneMenuByField({ router_name }, ne)
+  }
+
   static async getOneMenuByField(andField = {}, ne = {}) {
     const where = {}
     const neKeys = Object.keys(ne)
@@ -89,6 +100,6 @@ export default class MenuController {
     )
     if (menu && menu.dataValues)
       return menu.dataValues
-    return false
+    return {}
   }
 }
