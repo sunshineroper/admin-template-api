@@ -5,7 +5,13 @@ export class PositiveIdValidator extends Validator {
     super()
     this.id = [
       new Rule('isNotEmpty', 'id不能为空'),
-      new Rule('isInt', 'id必须是数值', { min: 1 }),
+      // new Rule('isInt', 'id必须是数值', { min: 1 }),
     ]
+  }
+}
+
+export class PageValidator extends Validator {
+  constructor() {
+    super()
   }
 }

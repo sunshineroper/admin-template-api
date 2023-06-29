@@ -1,6 +1,8 @@
 import { DataTypes, Model } from 'sequelize'
 import { get, set } from 'lodash'
 import sequelize from '../utils/db'
+import MenuModel from './menu'
+import RoleMenuPermissionsModel from './role-menu-permissions'
 
 class Role extends Model {
   toJSON() {
@@ -10,7 +12,7 @@ class Role extends Model {
       status: this.status,
       description: this.description,
     }
-    set(this, 'roleMenu', get(this, 'roleMenu', []))
+    set(origin, 'role_menu', get(this, 'role_menu', []))
     return origin
   }
 }
@@ -38,4 +40,5 @@ Role.init({
   sequelize,
 })
 
+Role.belongsToMany(MenuModel, { as: 'role_menu', through: RoleMenuPermissionsModel, foreignKey: 'role_id', otherKey: 'menu_id' })
 export default Role

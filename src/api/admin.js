@@ -1,9 +1,11 @@
 import { SRouter } from 'koa-cms-lib'
 import MenuController from '../controller/menu'
 import RoleController from '../controller/role'
+import UserController from '../controller/user'
 import { AddMenuValidator, MenuByRouterNameValidator } from '../validator/menuValidator'
-import { PositiveIdValidator } from '../validator/commonValidator'
+import { PageValidator, PositiveIdValidator } from '../validator/commonValidator'
 import { AddRoleValidator } from '../validator/roleValidator'
+import { AddUserValidator } from '../validator/userValidator'
 
 const adminRouter = new SRouter({
   prefix: '/admin',
@@ -49,9 +51,38 @@ adminRouter.sDelete('删除角色', '/role/deleteRole/:id', adminRouter.permissi
 
   return await RoleController.deleteRole(v, ctx)
 })
+
 adminRouter.sPost('新增或修改角色', '/role/addRole', adminRouter.permission('新增或修改角色'), async (ctx) => {
   const v = await new AddRoleValidator().validate(ctx)
   return await RoleController.addOrEditRole(v, ctx)
+})
+
+adminRouter.sPut('修改角色权限', '/role/dispatchPermissions/:id', adminRouter.permission('修改角色权限'), async (ctx) => {
+  const v = await new PositiveIdValidator().validate(ctx)
+
+  return await RoleController.dispatchPermissions(v, ctx)
+})
+
+adminRouter.sGet('获取用户列表带分页', '/user/getUserList', adminRouter.permission('获取用户列表带分页'), async (ctx) => {
+  const v = await new PageValidator().validate(ctx)
+  const userList = await UserController.getUserList(v)
+  ctx.json(userList)
+})
+
+adminRouter.sPost('新增用户', '/user/addUser', adminRouter.permission('新增用户'), async (ctx) => {
+  const v = await new AddUserValidator().validate(ctx)
+  return await UserController.addOrEditUser(v, ctx)
+})
+
+adminRouter.sPost('修改用户', '/user/editUser/:id', adminRouter.permission('修改用户'), async (ctx) => {
+  const v = await new PositiveIdValidator().validate(ctx)
+  return await UserController.addOrEditUser(v, ctx)
+})
+
+adminRouter.sDelete('删除用户', '/user/deleteUser/:id', adminRouter.permission('删除用户'), async (ctx) => {
+  const v = await new PositiveIdValidator().validate(ctx)
+
+  return await UserController.deleteUser(v, ctx)
 })
 
 export default adminRouter
