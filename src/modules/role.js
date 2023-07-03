@@ -1,8 +1,48 @@
 import { DataTypes, Model } from 'sequelize'
 import { get, set } from 'lodash'
 import sequelize from '../utils/db'
-import MenuModel from './menu'
-import RoleMenuPermissionsModel from './role-menu-permissions'
+
+class RoleMenuPermissions extends Model {
+
+}
+
+RoleMenuPermissions.init({
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  menu_id: {
+    type: DataTypes.INTEGER,
+  },
+  role_id: {
+    type: DataTypes.INTEGER,
+  },
+}, {
+  tableName: 'role-menu-permissions',
+  sequelize,
+})
+
+class RoleUserPermissions extends Model {
+
+}
+
+RoleUserPermissions.init({
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  user_id: {
+    type: DataTypes.INTEGER,
+  },
+  role_id: {
+    type: DataTypes.INTEGER,
+  },
+}, {
+  tableName: 'role-user-permissions',
+  sequelize,
+})
 
 class Role extends Model {
   toJSON() {
@@ -40,5 +80,4 @@ Role.init({
   sequelize,
 })
 
-Role.belongsToMany(MenuModel, { as: 'role_menu', through: RoleMenuPermissionsModel, foreignKey: 'role_id', otherKey: 'menu_id' })
-export default Role
+export { Role as RoleModel, RoleMenuPermissions as RoleMenuPermissionsModel, RoleUserPermissions as RoleUserPermissionsModel }

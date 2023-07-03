@@ -1,6 +1,6 @@
 import { NotFound, RepeatException } from 'koa-cms-lib'
 import { Op } from 'sequelize'
-import MenuModel from '../modules/menu'
+import { MenuModel } from '../modules/menu'
 
 export default class MenuController {
   static async getMenuList() {

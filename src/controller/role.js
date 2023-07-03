@@ -1,9 +1,8 @@
 import { NotFound } from 'koa-cms-lib'
 import { Op } from 'sequelize'
-import RoleModel from '../modules/role'
+import { RoleMenuPermissionsModel, RoleModel } from '../modules/role'
 import sequelize from '../utils/db'
-import MenuModel from '../modules/menu'
-import RoleMenuPermissionsModel from '../modules/role-menu-permissions'
+import { MenuModel } from '../modules/menu'
 
 export default class MenuController {
   static async getRoleList() {

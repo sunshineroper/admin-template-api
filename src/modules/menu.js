@@ -60,4 +60,4 @@ Menu.init({
   sequelize,
 })
 
-export default Menu
+export { Menu as MenuModel }

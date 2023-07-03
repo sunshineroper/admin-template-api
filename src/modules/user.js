@@ -1,4 +1,5 @@
 import { DataTypes, Model } from 'sequelize'
+import { get, set } from 'lodash'
 import sequelize from '../utils/db'
 
 class User extends Model {
@@ -10,7 +11,8 @@ class User extends Model {
       mobile: this.mobile,
       status: this.status,
     }
-    this.set(origin, 'avatar', 'https://avatars.githubusercontent.com/u/18000311?v=4')
+    set(origin, 'avatar', 'https://avatars.githubusercontent.com/u/18000311?v=4')
+    set(origin, 'role_list', get(this, 'role_list', []))
     return origin
   }
 }
@@ -68,5 +70,4 @@ UserEntity.init({
   tableName: 'user-entity',
   sequelize,
 })
-
-export { User, UserEntity }
+export { User as UserModel, UserEntity as UserEntityModel }

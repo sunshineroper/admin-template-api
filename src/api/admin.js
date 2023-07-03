@@ -6,6 +6,7 @@ import { AddMenuValidator, MenuByRouterNameValidator } from '../validator/menuVa
 import { PageValidator, PositiveIdValidator } from '../validator/commonValidator'
 import { AddRoleValidator } from '../validator/roleValidator'
 import { AddUserValidator } from '../validator/userValidator'
+import { loginRequired } from '../middleware/jwt'
 
 const adminRouter = new SRouter({
   prefix: '/admin',
@@ -72,6 +73,11 @@ adminRouter.sGet('获取用户列表带分页', '/user/getUserList', adminRouter
 adminRouter.sPost('新增用户', '/user/addUser', adminRouter.permission('新增用户'), async (ctx) => {
   const v = await new AddUserValidator().validate(ctx)
   return await UserController.addOrEditUser(v, ctx)
+})
+
+adminRouter.sGet('获取用户信息', '/user/getUserInfo', adminRouter.permission('获取用户信息'), loginRequired, async (ctx) => {
+  const user = ctx.currentUser
+  ctx.json(user)
 })
 
 adminRouter.sPost('修改用户', '/user/editUser/:id', adminRouter.permission('修改用户'), async (ctx) => {

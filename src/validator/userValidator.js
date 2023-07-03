@@ -7,3 +7,11 @@ export class AddUserValidator extends Validator {
     this.mobile = new Rule('isNotEmpty', '手机不能为空')
   }
 }
+
+export class LoginValidator extends Validator {
+  constructor() {
+    super()
+    this.name = new Rule('isNotEmpty', '用户名不能为空')
+    this.password = new Rule('isNotEmpty', '密码不能为空')
+  }
+}
