@@ -1,10 +1,12 @@
 import { AuthFailed, NotFound } from 'koa-cms-lib'
 import { Op } from 'sequelize'
+import { set } from 'lodash'
 import { UserEntityModel, UserModel } from '../modules/user'
 import { MenuModel } from '../modules/menu'
 import sequelize from '../utils/db'
 import { generate, verify } from '../utils/password-hash'
 import { RoleModel, RoleUserPermissionsModel } from '../modules/role'
+import { ROOT } from '../utils/types'
 
 export default class UserController {
   static async login(v, ctx) {
@@ -33,6 +35,39 @@ export default class UserController {
     catch (error) {
       ctx.logger.error(error)
       throw new NotFound(10031)
+    }
+  }
+
+  static async getUserIsRoot(id) {
+    let isAdmin = false
+    const user = await UserModel.findOne({
+      where: {
+        id,
+      },
+      include: {
+        model: RoleModel,
+        as: 'role_list',
+      },
+    })
+    if (user.role_list.length > 0) {
+      const isRoot = user.role_list.some(role => role.level === ROOT)
+      if (isRoot)
+        isAdmin = true
+    }
+    return isAdmin
+  }
+
+  static async getUserInfo(id) {
+    if (await UserController.getUserIsRoot(id)) {
+      const user = await UserModel.findByPk(id)
+      const role = await RoleModel.findOne({ where: { level: ROOT } })
+      const menu = await MenuModel.findAll()
+      set(role, 'role_menu', menu)
+      set(user, 'role_list', [role])
+      return user
+    }
+    else {
+      return await UserController.getUserById(id)
     }
   }
 

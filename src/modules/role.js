@@ -75,6 +75,11 @@ Role.init({
     comment: '状态 1是启用 0是禁用',
     defaultValue: 1,
   },
+  level: {
+    type: DataTypes.SMALLINT,
+    comment: 'root 超级管理员, 默认为user 普通用户组',
+    defaultValue: 1,
+  },
 }, {
   tableName: 'role',
   sequelize,

@@ -7,6 +7,8 @@ import { PageValidator, PositiveIdValidator } from '../validator/commonValidator
 import { AddRoleValidator } from '../validator/roleValidator'
 import { AddUserValidator } from '../validator/userValidator'
 import { loginRequired } from '../middleware/jwt'
+import { AddDictDetailValidator, AddDictValidator } from '../validator/dictValidator'
+import DictionaryController from '../controller/dictionary'
 
 const adminRouter = new SRouter({
   prefix: '/admin',
@@ -89,6 +91,51 @@ adminRouter.sDelete('删除用户', '/user/deleteUser/:id', adminRouter.permissi
   const v = await new PositiveIdValidator().validate(ctx)
 
   return await UserController.deleteUser(v, ctx)
+})
+
+adminRouter.sGet('获取字典列表带分页', '/dict/getDictList', adminRouter.permission('获取字典列表带分页'), async (ctx) => {
+  const v = await new PageValidator().validate(ctx)
+  const dictionaryList = await DictionaryController.getDictionaryList(v)
+  ctx.json(dictionaryList)
+})
+
+adminRouter.sPost('新增数据字典', '/dict/addDict', adminRouter.permission('新增数据字段'), async (ctx) => {
+  const v = await new AddDictValidator().validate(ctx)
+  return await DictionaryController.addOrEditDictionary(v, ctx)
+})
+
+adminRouter.sPut('修改数据字典', '/dict/editDict/:id', adminRouter.permission('数据字典'), async (ctx) => {
+  const v = await new PositiveIdValidator().validate(ctx)
+  return await DictionaryController.addOrEditDictionary(v, ctx)
+})
+
+adminRouter.sGet('获取字典详情列表带分页', '/dict/getDictDetailList', adminRouter.permission('获取字典详情列表带分页'), async (ctx) => {
+  await new PositiveIdValidator().validate(ctx, { id: 'dictionary_id' })
+  const v = await new PageValidator().validate(ctx)
+  const dictionaryDetailList = await DictionaryController.getDictionaryDetailList(v)
+  ctx.json(dictionaryDetailList)
+})
+
+adminRouter.sPost('新增数据字典值', '/dict/addDictDetail', adminRouter.permission('新增数据字典值'), async (ctx) => {
+  const v = await new AddDictDetailValidator().validate(ctx)
+  return await DictionaryController.addOrEditDictionaryDetail(v, ctx)
+})
+
+adminRouter.sPut('修改数据字典值', '/dict/editDictDetail/:id', adminRouter.permission('修改数据字典值'), async (ctx) => {
+  const v = await new AddDictDetailValidator().validate(ctx)
+  return await DictionaryController.addOrEditDictionaryDetail(v, ctx)
+})
+
+adminRouter.sDelete('删除字典', '/dict/:id', adminRouter.permission('删除字典'), async (ctx) => {
+  const v = await new PositiveIdValidator().validate(ctx)
+
+  return await DictionaryController.deleteDictionary(v, ctx)
+})
+
+adminRouter.sDelete('删除字典值', '/dict-detail/:id', adminRouter.permission('删除字典值'), async (ctx) => {
+  const v = await new PositiveIdValidator().validate(ctx)
+
+  return await DictionaryController.deleteDictionaryDetail(v, ctx)
 })
 
 export default adminRouter
