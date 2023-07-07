@@ -1,4 +1,5 @@
 import { DataTypes, Model } from 'sequelize'
+import { get, set } from 'lodash'
 import sequelize from '../utils/db'
 
 class Dictionary extends Model {
@@ -10,6 +11,7 @@ class Dictionary extends Model {
       status: this.status,
       description: this.description,
     }
+    set(origin, 'dict_value', get(this, 'dict_value', []))
     return origin
   }
 }
@@ -86,5 +88,8 @@ DictionaryDetail.init({
   tableName: 'dictionary_detail',
   sequelize,
 })
+
+Dictionary.hasMany(DictionaryDetail, { as: 'dict_value', foreignKey: 'dictionary_id' })
+DictionaryDetail.belongsTo(Dictionary, { foreignKey: 'id' })
 
 export { Dictionary as DictionaryModel, DictionaryDetail as DictionaryDetailModel }

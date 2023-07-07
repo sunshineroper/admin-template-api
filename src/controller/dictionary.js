@@ -119,4 +119,21 @@ export default class DictionaryController {
     await dictionaryDetail.destroy()
     ctx.success(45)
   }
+
+  static async getDictList(v) {
+    return await DictionaryModel.findAll({
+      include: {
+        model: DictionaryDetailModel,
+        as: 'dict_value',
+        required: false,
+        where: {
+          status: 1,
+        },
+      },
+      where: {
+        status: 1,
+      },
+    },
+    )
+  }
 }

@@ -185,13 +185,14 @@ export default class UserController {
       t = await sequelize.transaction()
       await user.destroy({ transaction: t })
       await UserEntityModel.destroy({ where: { user_id: id }, transaction: t })
-      await RoleUserPermissionsModel({ where: { user_id: id }, transaction: t })
+      await RoleUserPermissionsModel.destroy({ where: { user_id: id }, transaction: t })
       await t.commit()
       ctx.success(32)
     }
     catch (error) {
-      t && t.rollback()
       ctx.success(10262)
+      ctx.logger.error(error)
+      t && t.rollback()
     }
   }
 }

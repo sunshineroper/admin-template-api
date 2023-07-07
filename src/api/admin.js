@@ -82,7 +82,7 @@ adminRouter.sGet('获取用户信息', '/user/getUserInfo', adminRouter.permissi
   ctx.json(user)
 })
 
-adminRouter.sPost('修改用户', '/user/editUser/:id', adminRouter.permission('修改用户'), async (ctx) => {
+adminRouter.sPut('修改用户', '/user/editUser/:id', adminRouter.permission('修改用户'), async (ctx) => {
   const v = await new PositiveIdValidator().validate(ctx)
   return await UserController.addOrEditUser(v, ctx)
 })
@@ -136,6 +136,10 @@ adminRouter.sDelete('删除字典值', '/dict-detail/:id', adminRouter.permissio
   const v = await new PositiveIdValidator().validate(ctx)
 
   return await DictionaryController.deleteDictionaryDetail(v, ctx)
+})
+adminRouter.sGet('获取字典列表', '/dict/getDictMapList', adminRouter.permission('获取字典列表'), async (ctx) => {
+  const dictionaryMap = await DictionaryController.getDictList()
+  ctx.json(dictionaryMap)
 })
 
 export default adminRouter
