@@ -1,5 +1,6 @@
 const { readFile } = require('koa-cms-lib/utils')
 const { config } = require('koa-cms-lib/config')
+const { logger } = require('koa-cms-lib/logger')
 
 const env = process.env.NODE_ENV
 
@@ -15,14 +16,13 @@ const loadConfig = () => {
   }
 }
 
-const start = () => {
+const start = async () => {
   loadConfig()
   const { createServer } = require('./app.js')
-  const app = createServer()
+  const app = await createServer()
   const port = config.getItem('port')
   app.listen(port, () => {
-    // eslint-disable-next-line no-console
-    console.log(`this app listen port ${port}`)
+    logger.info(`this app listen port ${port}`)
   })
 }
 

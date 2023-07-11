@@ -2,6 +2,7 @@ import Koa from 'koa'
 import { Loader, Logger, json, logging, onError, success } from 'koa-cms-lib'
 import bodyParser from 'koa-bodyparser'
 import cors from 'koa2-cors'
+import { PermissionRouterModel } from './modules/role'
 
 const applyExtension = (app) => {
   json(app)
@@ -23,11 +24,12 @@ const loaderRouter = (app) => {
   new Loader(app)
 }
 
-export const createServer = () => {
+export const createServer = async () => {
   const app = new Koa()
   applyExtension(app)
   applyKoaMiddleware(app)
   loaderRouter(app)
   require('./utils/db')
+  await PermissionRouterModel.initPermission()
   return app
 }

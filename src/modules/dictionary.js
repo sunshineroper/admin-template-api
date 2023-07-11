@@ -85,7 +85,7 @@ DictionaryDetail.init({
     comment: '排列',
   },
 }, {
-  tableName: 'dictionary_detail',
+  tableName: 'dictionary-detail',
   sequelize,
 })
 
