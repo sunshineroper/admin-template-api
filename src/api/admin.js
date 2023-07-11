@@ -1,4 +1,4 @@
-import { SRouter } from 'koa-cms-lib'
+import { SRouter, generateToken } from 'koa-cms-lib'
 import MenuController from '../controller/menu'
 import RoleController from '../controller/role'
 import UserController from '../controller/user'
@@ -6,16 +6,18 @@ import { AddMenuValidator, MenuByRouterNameValidator } from '../validator/menuVa
 import { PageValidator, PositiveIdValidator } from '../validator/commonValidator'
 import { AddRoleValidator } from '../validator/roleValidator'
 import { AddUserValidator } from '../validator/userValidator'
-import { loginRequired } from '../middleware/jwt'
+import { loginRequired, refreshTokenRequired } from '../middleware/jwt'
 import { AddDictDetailValidator, AddDictValidator } from '../validator/dictValidator'
 import DictionaryController from '../controller/dictionary'
+import PermissionController from '../controller/permission'
 
 const adminRouter = new SRouter({
   prefix: '/admin',
   module: '管理员模块',
+  mountpermission: true,
 })
 
-adminRouter.sGet('获取所有菜单', '/menu/getMenuList', adminRouter.permission('获取所有菜单'), async (ctx) => {
+adminRouter.sGet('获取所有菜单', '/menu/getMenuList', adminRouter.permission('获取所有菜单'), loginRequired, async (ctx) => {
   const menuList = await MenuController.getMenuList()
   ctx.json(menuList)
 })
@@ -44,7 +46,7 @@ adminRouter.sPost('新增或修改菜单', '/menu/addMenu', adminRouter.permissi
   }
 })
 
-adminRouter.sGet('获取所有角色', '/role/getRoleList', adminRouter.permission('获取所有橘色'), async (ctx) => {
+adminRouter.sGet('获取所有角色', '/role/getRoleList', adminRouter.permission('获取所有角色'), loginRequired, async (ctx) => {
   const roleList = await RoleController.getRoleList()
   ctx.json(roleList)
 })
@@ -66,7 +68,16 @@ adminRouter.sPut('修改角色权限', '/role/dispatchPermissions/:id', adminRou
   return await RoleController.dispatchPermissions(v, ctx)
 })
 
-adminRouter.sGet('获取用户列表带分页', '/user/getUserList', adminRouter.permission('获取用户列表带分页'), async (ctx) => {
+adminRouter.sGet('刷新token', '/user/refreshToken', adminRouter.permission('刷新token'), refreshTokenRequired, async (ctx) => {
+  const currentUser = ctx.currentUser
+  const { accessToken, refreshToken } = generateToken(currentUser.id)
+  ctx.json({
+    accessToken,
+    refreshToken,
+  })
+})
+
+adminRouter.sGet('获取用户列表带分页', '/user/getUserList', adminRouter.permission('获取用户列表带分页'), loginRequired, async (ctx) => {
   const v = await new PageValidator().validate(ctx)
   const userList = await UserController.getUserList(v)
   ctx.json(userList)
@@ -93,7 +104,7 @@ adminRouter.sDelete('删除用户', '/user/deleteUser/:id', adminRouter.permissi
   return await UserController.deleteUser(v, ctx)
 })
 
-adminRouter.sGet('获取字典列表带分页', '/dict/getDictList', adminRouter.permission('获取字典列表带分页'), async (ctx) => {
+adminRouter.sGet('获取字典列表带分页', '/dict/getDictList', adminRouter.permission('获取字典列表带分页'), loginRequired, async (ctx) => {
   const v = await new PageValidator().validate(ctx)
   const dictionaryList = await DictionaryController.getDictionaryList(v)
   ctx.json(dictionaryList)
@@ -116,7 +127,7 @@ adminRouter.sGet('获取字典详情列表带分页', '/dict/getDictDetailList',
   ctx.json(dictionaryDetailList)
 })
 
-adminRouter.sPost('新增数据字典值', '/dict/addDictDetail', adminRouter.permission('新增数据字典值'), async (ctx) => {
+adminRouter.sPost('新增数据字典值', '/dict/addDictDetail', adminRouter.permission('新增数据字典值', false), async (ctx) => {
   const v = await new AddDictDetailValidator().validate(ctx)
   return await DictionaryController.addOrEditDictionaryDetail(v, ctx)
 })
@@ -137,9 +148,16 @@ adminRouter.sDelete('删除字典值', '/dict-detail/:id', adminRouter.permissio
 
   return await DictionaryController.deleteDictionaryDetail(v, ctx)
 })
+
 adminRouter.sGet('获取字典列表', '/dict/getDictMapList', adminRouter.permission('获取字典列表'), async (ctx) => {
   const dictionaryMap = await DictionaryController.getDictList()
   ctx.json(dictionaryMap)
+})
+
+adminRouter.sGet('获取api列表', '/api/getApiPageList', adminRouter.permission('获取api列表'), async (ctx) => {
+  const v = await new PageValidator().validate(ctx)
+  const list = await PermissionController.getApiPageList(v)
+  ctx.json(list)
 })
 
 export default adminRouter
