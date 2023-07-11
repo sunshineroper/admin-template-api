@@ -7,4 +7,6 @@ module.exports = {
     password: 'sunshine',
     database: 'sun_admin',
   },
+  accessExpire: 2 * 60 * 60,
+  refreshExpire: 60 * 60 * 24 * 30,
 }
