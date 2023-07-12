@@ -6,7 +6,7 @@ import { AddMenuValidator, MenuByRouterNameValidator } from '../validator/menuVa
 import { PageValidator, PositiveIdValidator } from '../validator/commonValidator'
 import { AddRoleValidator } from '../validator/roleValidator'
 import { AddUserValidator } from '../validator/userValidator'
-import { loginRequired, refreshTokenRequired } from '../middleware/jwt'
+import { groupRequired, loginRequired, refreshTokenRequired } from '../middleware/jwt'
 import { AddDictDetailValidator, AddDictValidator } from '../validator/dictValidator'
 import DictionaryController from '../controller/dictionary'
 import PermissionController from '../controller/permission'
@@ -143,7 +143,7 @@ adminRouter.sDelete('删除字典', '/dict/:id', adminRouter.permission('删除�
   return await DictionaryController.deleteDictionary(v, ctx)
 })
 
-adminRouter.sDelete('删除字典值', '/dict-detail/:id', adminRouter.permission('删除字典值'), async (ctx) => {
+adminRouter.sDelete('删除字典值', '/dict-detail/:id', adminRouter.permission('删除字典值'), groupRequired, async (ctx) => {
   const v = await new PositiveIdValidator().validate(ctx)
 
   return await DictionaryController.deleteDictionaryDetail(v, ctx)
@@ -154,9 +154,19 @@ adminRouter.sGet('获取字典列表', '/dict/getDictMapList', adminRouter.permi
   ctx.json(dictionaryMap)
 })
 
-adminRouter.sGet('获取api列表', '/api/getApiPageList', adminRouter.permission('获取api列表'), async (ctx) => {
+adminRouter.sGet('获取api分页列表', '/api/getApiPageList', adminRouter.permission('获取api分页列表'), groupRequired, async (ctx) => {
   const v = await new PageValidator().validate(ctx)
   const list = await PermissionController.getApiPageList(v)
+  ctx.json(list)
+})
+
+adminRouter.sGet('获取所有api模块名称', '/api/getPerissionRouterName', adminRouter.permission('获取所有api模块名称'), async (ctx) => {
+  const list = await PermissionController.getPerissionRouterName()
+  ctx.json(list)
+})
+
+adminRouter.sGet('获取api列表', '/api/getList', adminRouter.permission('获取api列表'), async (ctx) => {
+  const list = await PermissionController.getList()
   ctx.json(list)
 })
 

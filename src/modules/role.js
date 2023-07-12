@@ -3,9 +3,7 @@ import { get, set } from 'lodash'
 import { logger, routeMetaInfo } from 'koa-cms-lib'
 import sequelize from '../utils/db'
 
-class RoleMenuPermissions extends Model {
-
-}
+class RoleMenuPermissions extends Model {}
 
 RoleMenuPermissions.init({
   id: {
@@ -24,9 +22,26 @@ RoleMenuPermissions.init({
   sequelize,
 })
 
-class RoleUserPermissions extends Model {
+class RoleUserPermissions extends Model {}
 
-}
+class RoleRouterPermissions extends Model {}
+
+RoleRouterPermissions.init({
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  permission_router_id: {
+    type: DataTypes.INTEGER,
+  },
+  role_id: {
+    type: DataTypes.INTEGER,
+  },
+}, {
+  tableName: 'role-router-permissions',
+  sequelize,
+})
 
 RoleUserPermissions.init({
   id: {
@@ -55,6 +70,7 @@ class Role extends Model {
       description: this.description,
     }
     set(origin, 'role_menu', get(this, 'role_menu', []))
+    set(origin, 'permission_router_list', get(this, 'permission_router_list', []))
     return origin
   }
 }
@@ -174,4 +190,9 @@ PermissionRouter.init({
   sequelize,
 })
 
-export { Role as RoleModel, RoleMenuPermissions as RoleMenuPermissionsModel, RoleUserPermissions as RoleUserPermissionsModel, PermissionRouter as PermissionRouterModel }
+export {
+  Role as RoleModel, RoleMenuPermissions as RoleMenuPermissionsModel,
+  RoleUserPermissions as RoleUserPermissionsModel,
+  PermissionRouter as PermissionRouterModel,
+  RoleRouterPermissions as RoleRouterPermissionsModel,
+}
