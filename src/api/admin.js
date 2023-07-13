@@ -8,6 +8,7 @@ import { adminRequired, loginRequired } from '../middleware/jwt'
 import { AddDictDetailValidator, AddDictValidator } from '../validator/dictValidator'
 import DictionaryController from '../controller/dictionary'
 import PermissionController from '../controller/permission'
+import LogController from '../controller/log'
 
 const adminRouter = new SRouter({
   prefix: '/admin',
@@ -130,6 +131,12 @@ adminRouter.sGet('获取所有api模块名称', '/api/getPerissionRouterName', a
 
 adminRouter.sGet('获取api列表', '/api/getList', adminRouter.permission('获取api列表'), adminRequired, async (ctx) => {
   const list = await PermissionController.getList()
+  ctx.json(list)
+})
+
+adminRouter.sGet('获取日志列表', '/log/getList', adminRouter.permission('获取日志列表'), adminRequired, async (ctx) => {
+  const v = await new PageValidator().validate(ctx)
+  const list = await LogController.getLogList(v)
   ctx.json(list)
 })
 
