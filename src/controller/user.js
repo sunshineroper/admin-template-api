@@ -64,10 +64,13 @@ export default class UserController {
       const menu = await MenuModel.findAll()
       set(role, 'role_menu', menu)
       set(user, 'role_list', [role])
+      set(user, 'isAdmin', true)
       return user
     }
     else {
-      return await UserController.getUserById(id)
+      const user = await UserController.getUserById(id)
+      set(user, 'isAdmin', false)
+      return user
     }
   }
 

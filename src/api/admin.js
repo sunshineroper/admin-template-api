@@ -45,7 +45,7 @@ adminRouter.sPost('新增或修改菜单', '/menu/addMenu', adminRouter.permissi
 })
 
 adminRouter.sGet('获取所有角色', '/role/getRoleList', adminRouter.permission('获取所有角色'), loginRequired, async (ctx) => {
-  const roleList = await RoleController.getRoleList()
+  const roleList = await RoleController.getRoleList(ctx)
   ctx.json(roleList)
 })
 

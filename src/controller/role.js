@@ -3,9 +3,20 @@ import { Op } from 'sequelize'
 import { PermissionRouterModel, RoleMenuPermissionsModel, RoleModel, RoleRouterPermissionsModel } from '../modules/role'
 import sequelize from '../utils/db'
 import { MenuModel } from '../modules/menu'
+import { ROOT } from '../utils/types'
 
 export default class MenuController {
-  static async getRoleList() {
+  static async getRoleList(ctx) {
+    const currentUser = ctx.currentUser
+    let where = {}
+    if (!currentUser.isAdmin) {
+      where = {
+        level: {
+          [Op.ne]: ROOT,
+        },
+      }
+    }
+
     return await RoleModel.findAll({
       include: [
         {
@@ -20,6 +31,7 @@ export default class MenuController {
           as: 'permission_router_list',
         },
       ],
+      where,
     })
   }
 
