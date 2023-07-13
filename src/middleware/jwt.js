@@ -73,6 +73,9 @@ export const refreshTokenRequired = async (ctx, next) => {
 export const adminRequired = async (ctx, next) => {
   if (ctx.request.method !== 'OPTIONS') {
     const { identity } = jwt.parseHeader(ctx)
+    if (!await UserController.getUserIsRoot(identity))
+      throw new AuthFailed(10001)
+
     const user = await mountUser(identity)
     ctx.currentUser = user
   }
