@@ -7,6 +7,7 @@ export default class LogController {
     const { count, rows } = await LogModel.findAndCountAll({
       offset: (+page - 1) * +limit,
       limit: +limit,
+      order: [['createdAt', 'DESC']],
 
     })
     return { page, limit, count, list: rows }

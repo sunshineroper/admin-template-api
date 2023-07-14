@@ -10,14 +10,14 @@ const writeLog = async (template, ctx) => {
     const layer = ctx.matched[0]
     const prefix = layer.opts.prefix
     const endpoint = `${ctx.method} ${layer.path.replace(prefix, '')}`
-    const { permission: permission_name } = routeMetaInfo.get(endpoint)
+    const permission = routeMetaInfo.get(endpoint)
     const user = ctx.currentUser
     await LogModel.create({
       message: tmp,
-      permission_name,
+      permission_name: permission ? permission.permission_name : '',
       ip: ctx.ip,
       methid: ctx.method,
-      path: layer.path,
+      path: ctx.path,
       method: ctx.method,
       user_name: user ? user.name : null,
       user_id: user ? user.id : '',
