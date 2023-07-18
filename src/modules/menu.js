@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize'
 import sequelize from '../utils/db'
+import modelMixin from '../utils/model-mixin'
 
 class Menu extends Model {
 }
@@ -58,6 +59,7 @@ Menu.init({
 }, {
   tableName: 'menu',
   sequelize,
+  ...modelMixin.options,
 })
 
 export { Menu as MenuModel }

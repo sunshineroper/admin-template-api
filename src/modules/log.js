@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize'
 import sequelize from '../utils/db'
+import modelMixin from '../utils/model-mixin'
 
 class Log extends Model {}
 
@@ -44,6 +45,7 @@ Log.init({
 }, {
   tableName: 'log',
   sequelize,
+  ...modelMixin.options,
 })
 
 export { Log as LogModel }

@@ -1,4 +1,4 @@
-import { DataTypes, Model, Op } from 'sequelize'
+import { DataTypes, Model, Op, Sequelize } from 'sequelize'
 import { get, set } from 'lodash'
 import { logger, routeMetaInfo } from 'koa-cms-lib'
 import sequelize from '../utils/db'
@@ -112,6 +112,7 @@ class PermissionRouter extends Model {
       permission_name: this.permission_name,
       endpoint: this.endpoint,
     }
+    set(origin, 'role_list', get(this, 'role_list', []))
     return origin
   }
 
@@ -190,9 +191,43 @@ PermissionRouter.init({
   sequelize,
 })
 
+class RoleBtnPermissions extends Model {
+
+}
+
+RoleBtnPermissions.init({
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  name: {
+    type: Sequelize.INTEGER,
+    comment: '按钮名称',
+  },
+  identity: {
+    type: Sequelize.STRING,
+    unique: true,
+    comment: '按钮的唯一Identity',
+  },
+  menu_id: {
+    type: Sequelize.INTEGER,
+    comment: '菜单id',
+  },
+  status: {
+    type: Sequelize.SMALLINT,
+    comment: '按钮状态',
+    defaultValue: 1,
+  },
+
+}, {
+  tableName: 'role-btn-permissions',
+  sequelize,
+})
 export {
   Role as RoleModel, RoleMenuPermissions as RoleMenuPermissionsModel,
   RoleUserPermissions as RoleUserPermissionsModel,
   PermissionRouter as PermissionRouterModel,
   RoleRouterPermissions as RoleRouterPermissionsModel,
+  RoleBtnPermissions as RoleBtnPermissionsModel,
 }

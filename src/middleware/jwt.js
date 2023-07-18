@@ -1,7 +1,7 @@
 import { AuthFailed, RefreshException, jwt, routeMetaInfo } from 'koa-cms-lib'
 import { Op } from 'sequelize'
 import UserController from '../controller/user'
-import { PermissionRouterModel, RoleRouterPermissionsModel } from '../modules/role'
+import { PermissionRouterModel, RoleModel } from '../modules/role'
 
 const mountUser = async (id) => {
   const user = await UserController.getUserInfo(id)
@@ -23,34 +23,35 @@ export const groupRequired = async (ctx, next) => {
     const user = await mountUser(identity)
     if (!await UserController.getUserIsRoot(identity)) {
       if (ctx.matched) {
-        const layer = ctx.matched[0]
+        const name = ctx.routerName
+        const layer = ctx.matched.find(l => l.name === name)
+        if (!layer)
+          throw new AuthFailed(10001)
         const prefix = layer.opts.prefix
         const endpoint = `${ctx.method} ${layer.path.replace(prefix, '')}`
-        const { permission: permission_name, module: module_name } = routeMetaInfo.get(endpoint)
-        const routerPermission = await PermissionRouterModel.findOne({ where: { endpoint, permission_name, module_name } })
-        if (!routerPermission)
+        const permission = routeMetaInfo.get(endpoint)
+        if (!permission || !permission.mount)
           throw new AuthFailed(10001)
         const role_id = user.role_list.map(item => item.id)
-        const permission = await RoleRouterPermissionsModel.findOne({
-          where: {
-            role_id: {
-              [Op.in]: role_id,
+        const routerPermission = await PermissionRouterModel.findOne({
+          where: { endpoint, permission_name: permission.permission, module_name: permission.module },
+          include: {
+            model: RoleModel,
+            as: 'role_list',
+            where: {
+              id: {
+                [Op.in]: role_id,
+              },
             },
-            permission_router_id: routerPermission.id,
           },
         })
-        if (!permission)
+        if (!routerPermission)
           throw new AuthFailed(10001)
       }
     }
     ctx.currentUser = user
   }
   await next()
-}
-
-export const notAllowed = (ctx, next) => {
-  ctx.status = 404
-  ctx.body = 'Not Allowed'
 }
 
 export const refreshTokenRequired = async (ctx, next) => {
@@ -73,10 +74,10 @@ export const refreshTokenRequired = async (ctx, next) => {
 export const adminRequired = async (ctx, next) => {
   if (ctx.request.method !== 'OPTIONS') {
     const { identity } = jwt.parseHeader(ctx)
+    const user = await mountUser(identity)
     if (!await UserController.getUserIsRoot(identity))
       throw new AuthFailed(10001)
 
-    const user = await mountUser(identity)
     ctx.currentUser = user
   }
   await next()

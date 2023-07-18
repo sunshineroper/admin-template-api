@@ -1,4 +1,4 @@
-import { routeMetaInfo } from 'koa-cms-lib'
+import { AuthFailed, routeMetaInfo } from 'koa-cms-lib'
 import { LogModel } from '../modules/log'
 
 const parseTemplate = (template, user, response, request) => {
@@ -7,7 +7,10 @@ const parseTemplate = (template, user, response, request) => {
 const writeLog = async (template, ctx) => {
   const tmp = parseTemplate(template, ctx.currentUser, ctx.response, ctx.request)
   if (ctx.matched) {
-    const layer = ctx.matched[0]
+    const name = ctx.routerName
+    const layer = ctx.matched.find(l => l.name === name)
+    if (!layer)
+      throw new AuthFailed(10001)
     const prefix = layer.opts.prefix
     const endpoint = `${ctx.method} ${layer.path.replace(prefix, '')}`
     const permission = routeMetaInfo.get(endpoint)

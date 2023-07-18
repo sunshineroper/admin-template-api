@@ -1,6 +1,7 @@
 import { DataTypes, Model } from 'sequelize'
 import { get, set } from 'lodash'
 import sequelize from '../utils/db'
+import modelMixin from '../utils/model-mixin'
 
 class User extends Model {
   toJSON() {
@@ -10,6 +11,7 @@ class User extends Model {
       nickname: this.nickname,
       mobile: this.mobile,
       status: this.status,
+      createTime: this.createTime,
     }
     set(origin, 'avatar', 'https://avatars.githubusercontent.com/u/18000311?v=4')
     set(origin, 'role_list', get(this, 'role_list', []))
@@ -43,6 +45,7 @@ User.init({
 }, {
   tableName: 'user',
   sequelize,
+  ...modelMixin.options,
 })
 
 class UserEntity extends Model {}

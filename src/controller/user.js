@@ -96,17 +96,27 @@ export default class UserController {
     return user
   }
 
-  static async getUserList(v) {
+  static async getUserList(v, ctx) {
     const page = v.get('query.page', true, 1)
     const limit = v.get('query.limit', true, 10)
+    const currentUser = ctx.currentUser
+    let where = {}
+    if (!currentUser.isAdmin) {
+      where = {
+        level: {
+          [Op.ne]: ROOT,
+        },
+      }
+    }
     const { count, rows } = await UserModel.findAndCountAll({
       include: {
         model: RoleModel,
         as: 'role_list',
+        where,
       },
       offset: (+page - 1) * +limit,
       limit: +limit,
-
+      order: [['createdAt', 'DESC']],
     })
     return { page, limit, count, list: rows }
   }

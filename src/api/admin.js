@@ -9,6 +9,8 @@ import { AddDictDetailValidator, AddDictValidator } from '../validator/dictValid
 import DictionaryController from '../controller/dictionary'
 import PermissionController from '../controller/permission'
 import LogController from '../controller/log'
+import BtnController from '../controller/btn'
+import { AddBtnValidator, UniqueIdentityValidator } from '../validator/btnValidator'
 
 const adminRouter = new SRouter({
   prefix: '/admin',
@@ -121,7 +123,6 @@ adminRouter.sGet('获取api分页列表', '/api/getApiPageList', adminRouter.per
   const v = await new PageValidator().validate(ctx)
   const list = await PermissionController.getApiPageList(v)
   ctx.json(list)
-  await next()
 })
 
 adminRouter.sGet('获取所有api模块名称', '/api/getPerissionRouterName', adminRouter.permission('获取所有api模块名称'), adminRequired, async (ctx, next) => {
@@ -138,6 +139,27 @@ adminRouter.sGet('获取日志列表', '/log/getList', adminRouter.permission('�
   const v = await new PageValidator().validate(ctx)
   const list = await LogController.getLogList(v)
   ctx.json(list)
+})
+
+adminRouter.sPost('保存权限按钮', '/btn/add', adminRouter.permission('保存权限按钮'), adminRequired, async (ctx) => {
+  const v = await new AddBtnValidator().validate(ctx)
+  return await BtnController.addOrEdit(ctx, v)
+})
+
+adminRouter.sGet('获取权限按钮分页列表', '/btn/getBtnPageList', adminRouter.permission('获取权限按钮分页列表'), adminRequired, async (ctx, next) => {
+  const v = await new PageValidator().validate(ctx)
+  const list = await BtnController.getPageList(v)
+  ctx.json(list)
+})
+
+adminRouter.sGet('校验权限按钮的identity', '/btn/validatorUniqueIdentity', adminRouter.permission('校验权限按钮的identity'), adminRequired, async (ctx) => {
+  const v = await new UniqueIdentityValidator().validate(ctx)
+  await BtnController.validatorUniqueIdentity(ctx, v)
+})
+
+adminRouter.sDelete('删除权限按钮', '/btn/:id', adminRouter.permission('删除权限按钮'), adminRequired, async (ctx) => {
+  const v = await new PositiveIdValidator().validate(ctx)
+  return await BtnController.deleteBtn(ctx, v)
 })
 
 export default adminRouter
