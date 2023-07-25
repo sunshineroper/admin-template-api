@@ -20,8 +20,8 @@ dependencies:
     specifier: ^4.4.0
     version: 4.4.0
   koa-cms-lib:
-    specifier: ^1.1.9
-    version: 1.1.9(eslint@8.42.0)(typescript@5.1.3)
+    specifier: ^1.2.0
+    version: 1.2.0(eslint@8.42.0)(typescript@5.1.3)
   koa-router:
     specifier: ^12.0.0
     version: 12.0.0
@@ -3421,13 +3421,14 @@ packages:
       copy-to: 2.0.1
     dev: false
 
-  /koa-cms-lib@1.1.9(eslint@8.42.0)(typescript@5.1.3):
-    resolution: {integrity: sha512-NvL1LF2wPEYX8GtrzrLpGDFD+v45sTlztNvoIbgChNqSd3QYSxf4AVxai6Tp2dj652iPQBVXk5/fip8g1uBZhA==}
+  /koa-cms-lib@1.2.0(eslint@8.42.0)(typescript@5.1.3):
+    resolution: {integrity: sha512-ucxH9YLtiTNFqc21B+Sl2JSKhp1+2ppNB4eTvB2sHt9hk08/6snwQjte4Mu8+yFWA9ZO8oiRQGO6fY8me6r1ww==}
     dependencies:
       '@antfu/eslint-config': 0.34.2(eslint@8.42.0)(typescript@5.1.3)
       class-validator: 0.14.0
       koa: 2.14.2
       lodash: 4.17.21
+      uuid: 9.0.0
     transitivePeerDependencies:
       - eslint
       - eslint-import-resolver-typescript
@@ -4568,6 +4569,11 @@ packages:
 
   /uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    hasBin: true
+    dev: false
+
+  /uuid@9.0.0:
+    resolution: {integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==}
     hasBin: true
     dev: false
 
