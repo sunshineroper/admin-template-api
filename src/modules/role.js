@@ -68,6 +68,7 @@ class Role extends Model {
       name: this.name,
       status: this.status,
       description: this.description,
+      level: this.level,
     }
     set(origin, 'role_menu', get(this, 'role_menu', []))
     set(origin, 'permission_router_list', get(this, 'permission_router_list', []))

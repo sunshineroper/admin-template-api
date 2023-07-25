@@ -5,7 +5,7 @@ import { UserEntityModel, UserModel } from '../modules/user'
 import { MenuModel } from '../modules/menu'
 import sequelize from '../utils/db'
 import { generate, verify } from '../utils/password-hash'
-import { RoleModel, RoleUserPermissionsModel } from '../modules/role'
+import { RoleBtnPermissionsModel, RoleModel, RoleUserPermissionsModel } from '../modules/role'
 import { ROOT } from '../utils/types'
 
 export default class UserController {
@@ -61,7 +61,12 @@ export default class UserController {
     if (await UserController.getUserIsRoot(id)) {
       const user = await UserModel.findByPk(id)
       const role = await RoleModel.findOne({ where: { level: ROOT } })
-      const menu = await MenuModel.findAll()
+      const menu = await MenuModel.findAll({
+        include: {
+          model: RoleBtnPermissionsModel,
+          as: 'role_btn_list',
+        },
+      })
       set(role, 'role_menu', menu)
       set(user, 'role_list', [role])
       set(user, 'isAdmin', true)
@@ -87,6 +92,10 @@ export default class UserController {
           as: 'role_menu',
           through: {
             attributes: [],
+          },
+          include: {
+            model: RoleBtnPermissionsModel,
+            as: 'role_btn_list',
           },
         },
       },
