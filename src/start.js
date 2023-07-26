@@ -18,6 +18,7 @@ const loadConfig = () => {
 
 const start = async () => {
   loadConfig()
+  console.log(config)
   const { createServer } = require('./app.js')
   const app = await createServer()
   const port = config.getItem('port')

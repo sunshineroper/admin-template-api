@@ -16,11 +16,4 @@ publicRouter.post('/login', async (ctx) => {
   })
 })
 
-publicRouter.get('/userInfo', (ctx) => {
-  ctx.json({
-    id: 1,
-    name: 'sunshine',
-  })
-})
-
 export default publicRouter

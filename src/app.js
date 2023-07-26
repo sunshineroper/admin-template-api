@@ -1,22 +1,24 @@
+import path from 'node:path'
 import Koa from 'koa'
-import { Loader, Logger, json, logging, onError, success } from 'koa-cms-lib'
+import { Loader, Logger, config, json, logging, multipart, onError, success } from 'koa-cms-lib'
 import bodyParser from 'koa-bodyparser'
 import cors from 'koa2-cors'
+import koaStatic from 'koa-static'
 import { PermissionRouterModel } from './modules/role'
 
 const applyExtension = (app) => {
   json(app)
   success(app)
   logging(app)
-  // multipart(app)
+  multipart(app)
 }
 
 const applyKoaMiddleware = (app) => {
+  app.use(koaStatic(path.join(process.cwd(), config.getItem('staticDir'))))
   app.use(Logger)
   app.use(bodyParser())
   app.use(cors())
   app.on('error', onError)
-  // app.use(koaStatic(path.join(process.cwd(), config.getItem('setting.staticDir'))))
 }
 
 const loaderRouter = (app) => {
