@@ -10,12 +10,12 @@ import { ROOT } from '../utils/types'
 
 export default class UserController {
   static async login(v, ctx) {
-    const name = v.get('body.name')
+    const user_code = v.get('body.user_code')
     const password = v.get('body.password')
     try {
       const user = await UserModel.findOne({
         where: {
-          name,
+          user_code,
         },
       })
       if (!user)
@@ -144,7 +144,8 @@ export default class UserController {
     user.name = v.get('body.name')
     user.nickname = v.get('body.nickname')
     user.mobile = v.get('body.mobile')
-    user.stauts = v.get(user.stauts)
+    user.stauts = v.get('body.stauts')
+    user.user_code = v.get('body.user_code')
     let t
     try {
       t = await sequelize.transaction()

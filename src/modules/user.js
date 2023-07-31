@@ -12,6 +12,7 @@ class User extends Model {
       mobile: this.mobile,
       status: this.status,
       createTime: this.createTime,
+      usercode: this.usercode,
     }
     set(origin, 'avatar', 'https://avatars.githubusercontent.com/u/18000311?v=4')
     set(origin, 'role_list', get(this, 'role_list', []))
@@ -36,6 +37,10 @@ User.init({
   mobile: {
     type: DataTypes.INTEGER,
     comment: '手机号码',
+  },
+  user_code: {
+    type: DataTypes.STRING,
+    comment: '登录账号',
   },
   status: {
     type: DataTypes.SMALLINT,
@@ -68,7 +73,6 @@ UserEntity.init({
     type: DataTypes.STRING,
     comment: '标识是password的时候会存储加密后的密码',
   },
-
 }, {
   tableName: 'user-entity',
   sequelize,
