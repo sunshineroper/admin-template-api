@@ -1,6 +1,8 @@
 import { MenuModel } from './menu'
 import { UserModel } from './user'
 import { PermissionRouterModel, RoleBtnPermissionsModel, RoleMenuPermissionsModel, RoleModel, RoleRouterPermissionsModel, RoleUserPermissionsModel } from './role'
+import { FileModel } from './file'
+import { TenderNoticeModel } from './tender-notice'
 
 RoleModel.belongsToMany(MenuModel, { as: 'role_menu', through: RoleMenuPermissionsModel, foreignKey: 'role_id', otherKey: 'menu_id' })
 
@@ -15,3 +17,6 @@ PermissionRouterModel.belongsToMany(RoleModel, { as: 'role_list', through: RoleR
 MenuModel.hasMany(RoleBtnPermissionsModel, { as: 'role_btn_list', foreignKey: 'menu_id' })
 
 RoleBtnPermissionsModel.belongsTo(MenuModel, { foreignKey: 'id' })
+
+TenderNoticeModel.hasMany(FileModel, { as: 'notice_attachment', foreignKey: 'source_id' })
+FileModel.belongsTo(TenderNoticeModel, { foreignKey: 'id' })
