@@ -10,7 +10,7 @@ class File extends Model {
       path: this.path,
       url: this.url,
       md5: this.md5,
-      fieldname: this.fieldname,
+      name: this.name,
       filename: this.filename,
       extension: this.extension,
       size: this.size,
@@ -49,7 +49,7 @@ File.init({
   fieldname: {
     type: DataTypes.STRING,
   },
-  filename: {
+  name: {
     type: DataTypes.STRING,
     comment: '文件名称',
   },

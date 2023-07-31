@@ -16,7 +16,7 @@ export default class LocalUploader extends Uploader {
         path: relativePath,
         type: 'LOCAL',
         md5,
-        filename: file.filename,
+        name: file.filename,
         fieldname: file.fieldname,
         extension: path.extname(file.filename),
         size: file.size,
