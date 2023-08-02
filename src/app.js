@@ -5,6 +5,7 @@ import bodyParser from 'koa-bodyparser'
 import cors from 'koa2-cors'
 import koaStatic from 'koa-static'
 import { PermissionRouterModel } from './modules/role'
+import WebSocket from './utils/socket'
 
 const applyExtension = (app) => {
   json(app)
@@ -19,6 +20,8 @@ const applyKoaMiddleware = (app) => {
   app.use(bodyParser())
   app.use(cors())
   app.on('error', onError)
+  // eslint-disable-next-line no-new
+  new WebSocket(app)
 }
 
 const loaderRouter = (app) => {

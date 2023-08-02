@@ -26,7 +26,8 @@
     "mysql2": "^3.3.5",
     "nodemon": "^2.0.22",
     "save": "^2.9.0",
-    "sequelize": "^6.32.0"
+    "sequelize": "^6.32.0",
+    "ws": "^8.13.0"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.5",
