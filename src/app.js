@@ -14,14 +14,16 @@ const applyExtension = (app) => {
   multipart(app)
 }
 
+const applyWebSocket = (app) => {
+  const server = new WebSocket(app)
+  return server.init()
+}
 const applyKoaMiddleware = (app) => {
   app.use(koaStatic(path.join(process.cwd(), config.getItem('staticDir'))))
   app.use(Logger)
   app.use(bodyParser())
   app.use(cors())
   app.on('error', onError)
-  // eslint-disable-next-line no-new
-  new WebSocket(app)
 }
 
 const loaderRouter = (app) => {
@@ -36,5 +38,5 @@ export const createServer = async () => {
   loaderRouter(app)
   require('./utils/db')
   await PermissionRouterModel.initPermission()
-  return app
+  return applyWebSocket(app)
 }

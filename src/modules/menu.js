@@ -1,8 +1,28 @@
 import { DataTypes, Model } from 'sequelize'
+import { get, set } from 'lodash'
 import sequelize from '../utils/db'
 import modelMixin from '../utils/model-mixin'
 
 class Menu extends Model {
+  toJSON() {
+    const origin = {
+      createTime: this.createTime,
+      id: this.id,
+      pid: this.pid,
+      name: this.name,
+      type: this.type,
+      icon: this.icon,
+      title: this.title,
+      status: this.status,
+      hidden: this.hidden,
+      component_path: this.component_path,
+      router_url: this.router_url,
+      router_name: this.router_name,
+      sort: this.sort,
+    }
+    set(origin, 'role_btn_list', get(this, 'role_btn_list', []))
+    return origin
+  }
 }
 Menu.init({
   id: {
@@ -31,9 +51,9 @@ Menu.init({
     comment: '标题',
   },
   status: {
-    type: DataTypes.SMALLINT,
+    type: DataTypes.STRING(2),
     comment: '状态 1是启用 0是禁用',
-    defaultValue: 1,
+    defaultValue: '1',
   },
   hidden: {
     type: DataTypes.SMALLINT,

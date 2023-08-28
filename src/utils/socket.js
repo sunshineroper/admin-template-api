@@ -14,7 +14,7 @@ export default class WebSocket {
 
   init() {
     const server = http.createServer(this.app.callback())
-    this.wss = new WebSocketServer({ noServer: true, path: '/ws/message' })
+    this.wss = new WebSocketServer({ noServer: true })
     server.on('upgrade', this.interceptors.bind(this))
     this.app.context.websocket = this
     this.wss.conncation = () => {
@@ -26,25 +26,32 @@ export default class WebSocket {
   }
 
   interceptors(request, socket, head) {
-    const params = new URLSearchParams(
-      request.url.slice(request.url.indexOf('?')),
-    )
-    const token = params.get('token')
-    try {
-      const { identity } = jwt.verifyToken(token)
-      this.wss.handleUpgrade(request, socket, head, (ws) => {
-        socket.on('error', (err) => {
-          console.error(err)
+    const url = request.url.substring(request.url, request.url.indexOf('?'))
+    if (url === '/ws/message') {
+      const params = new URLSearchParams(
+        request.url.slice(request.url.indexOf('?')),
+      )
+      const token = params.get('token')
+      try {
+        const { identity } = jwt.verifyToken(token)
+        this.wss.handleUpgrade(request, socket, head, (ws) => {
+          socket.on('error', (err) => {
+            console.error(err)
+          })
+          ws.send('sunshine')
+          set(ws, USER_KEY, identity)
+          this.sessions.add(ws)
+          this.wss.emit('connection', ws, request)
         })
-        ws.send('sunshine')
-        set(ws, USER_KEY, identity)
-        this.sessions.add(ws)
-        this.wss.emit('connection', ws, request)
-      })
+      }
+      catch (error) {
+        socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n')
+        logger.error(error)
+        // socket.destory()
+      }
     }
-    catch (error) {
-      logger.error(error)
-      // socket.destory()
+    else {
+      socket.destroy()
     }
   }
 
